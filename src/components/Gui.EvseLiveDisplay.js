@@ -23,6 +23,9 @@ export default function EvseLiveDisplay(props) {
     const [evseError, setEvseError] = useState("");
     const [meterError, setMeterError] = useState("");
 
+    const [idTag, setIdTag] = useState("");
+    const [rfidError, setRfidError] = useState("");
+
     const [fetchingEvse, setFetchingEvse] = useState(false);
     const [fetchingMeter, setFetchingMeter] = useState(false);
 
@@ -186,6 +189,46 @@ export default function EvseLiveDisplay(props) {
         </div>
     }
 
+    function handleIdTagChange(e) {
+        setIdTag(e.target.value);
+    }
+
+    function handleRfidSubmit(e) {
+        e.preventDefault();
+        if (idTag.trim() === "") {
+            setRfidError("RFID tag cannot be empty");
+            return;
+        }
+        if (idTag.length > 20) {
+            setRfidError("RFID tag must be 20 characters or less");
+            return;
+        }
+        setRfidError("");
+        simulateRfidSwipe(idTag.trim());
+    }
+
+    function simulateRfidSwipe(tag) {
+        setPosting(true);
+        DataService.post("/connector/" + props.connectorId + "/transaction", {
+            idTag: tag
+        }).then(
+            resp => {
+                setPostSuccess(`RFID tag ${tag} processed successfully - ${DateFormatter.fullDate(new Date())}`);
+                setPostError("");
+                setIdTag("");  // Clear the input field after successful submission
+            }
+        ).catch(
+            e => {
+                setPostSuccess("");
+                setPostError("Error processing RFID tag");
+            }
+        ).finally(
+            () => {
+                setPosting(false);
+            }
+        )
+    }
+
     return <div class={`evse-live is-padded-16 is-border-radius is-shadow-1 ${_currentGradient()}`}>
         <div class="is-row">
             <div class="is-col" style="flex-grow:0">
@@ -275,6 +318,25 @@ export default function EvseLiveDisplay(props) {
                             Voltage<br/>
                             {voltage} V
                         </div>
+                    </div>
+                </div>
+                <div class="is-row">
+                    <div class="is-col">
+                        <form onSubmit={handleRfidSubmit} class="rfid-reader">
+                            <input
+                                type="text"
+                                value={idTag}
+                                onInput={handleIdTagChange}
+                                placeholder="Enter RFID tag (max 20 chars)"
+                                maxLength={20}
+                                class="rfid-input"
+                            />
+                            <button type="submit" disabled={posting} class="rfid-submit">
+                                {posting ? "Processing..." : "Swipe RFID"}
+                            </button>
+                        </form>
+                        {postSuccess && <p class="success-message">{postSuccess}</p>}
+                        {postError && <p class="error-message">{postError}</p>}
                     </div>
                 </div>
             </div>
