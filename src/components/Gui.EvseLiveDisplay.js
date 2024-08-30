@@ -4,8 +4,8 @@ import "./component_styles/evseLiveDisplay.css";
 
 import { useEffect, useState } from "preact/hooks";
 import DataService from "../DataService";
-
 import DateFormatter from "../DateFormatter";
+
 import ICross from "./icons/ICross.svg";
 import ICheckCircle from "./icons/ICheckCircle.svg";
 import IClock from "./icons/IClock.svg";
@@ -209,8 +209,6 @@ export default function EvseLiveDisplay(props) {
                 if (resp.idTag === idTag) {
                     setPostSuccess(`Transaction update confirmed - ${DateFormatter.fullDate(new Date())}`);
                     setPostError("");
-                    setIdTag("");
-                    setShowIdTagInput(false);
                 } else {
                     setPostSuccess("");
                     setPostError("An error occurred while updating the transaction.");
@@ -299,6 +297,7 @@ export default function EvseLiveDisplay(props) {
                                     <IUpload />
                                     <div>
                                         Swipe RFID
+                                        <span class="chevron">{showIdTagInput ? '▲' : '▼'}</span>
                                     </div>
                                 </a>
                             </div>
