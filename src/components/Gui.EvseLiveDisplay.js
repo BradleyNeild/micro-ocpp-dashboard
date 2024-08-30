@@ -81,9 +81,6 @@ export default function EvseLiveDisplay(props) {
     }
 
     function updateEvse(_evPlugged, _evReady, _evseReady) {
-        setEvPlugged(_evPlugged);
-        setEvReady(_evReady);
-        setEvseReady(_evseReady);
         if (posting) return;
         setPosting(true);
         DataService.post("/connector/" + props.connectorId + "/evse", {
@@ -93,10 +90,13 @@ export default function EvseLiveDisplay(props) {
         }).then(
             resp => {
                 if (
-                    resp.evPlugged === evPlugged &&
-                    resp.evReady === evReady &&
-                    resp.evseReady === evseReady
+                    resp.evPlugged === _evPlugged &&
+                    resp.evReady === _evReady &&
+                    resp.evseReady === _evseReady
                 ) {
+                    setEvPlugged(_evPlugged);
+                    setEvReady(_evReady);
+                    setEvseReady(_evseReady);
                     setPostSuccess(`Evse update confirmed by the server - ${DateFormatter.fullDate(new Date())}`);
                     setPostError("");
                 } else {
@@ -314,6 +314,12 @@ export default function EvseLiveDisplay(props) {
                                 </div>
                             </div>
                         )}
+                        {postError !== "" && <div class="alert is-error">
+                            <IForbidden /> {postError}
+                        </div>}
+                        {postSuccess !== "" && <div class="alert is-success">
+                            <ICheckCircle /> {postSuccess}
+                        </div>}
                     </div>
                     <div class="is-col meter-values">
                         <div class="label all-center">
