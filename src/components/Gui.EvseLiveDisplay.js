@@ -196,9 +196,6 @@ export default function EvseLiveDisplay(props) {
 
     function toggleIdTagInput() {
         setShowIdTagInput(!showIdTagInput);
-        if (showIdTagInput) {
-            setIdTag("");
-        }
     }
 
     function swipeRfid() {
