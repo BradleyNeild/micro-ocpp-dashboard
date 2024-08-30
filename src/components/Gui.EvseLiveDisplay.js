@@ -315,12 +315,6 @@ export default function EvseLiveDisplay(props) {
                                 </div>
                             </div>
                         )}
-                        {postError !== "" && <div class="alert is-error">
-                            <IForbidden /> {postError}
-                        </div>}
-                        {postSuccess !== "" && <div class="alert is-success">
-                            <ICheckCircle /> {postSuccess}
-                        </div>}
                     </div>
                     <div class="is-col meter-values">
                         <div class="label all-center">
