@@ -5,6 +5,7 @@ import "./component_styles/evseLiveDisplay.css";
 import { useEffect, useState } from "preact/hooks";
 import DataService from "../DataService";
 
+import DateFormatter from "../DateFormatter";
 import ICross from "./icons/ICross.svg";
 import ICheckCircle from "./icons/ICheckCircle.svg";
 import IClock from "./icons/IClock.svg";
@@ -15,6 +16,7 @@ import IUnplugged from "./icons/IUnplugged.svg";
 import IEv from "./icons/IEv.svg";
 import IEvseIcon from "./icons/IEvseIcon.svg";
 import ILiveArrows from "./icons/ILiveArrows.svg";
+import IUpload from "./icons/IUpload.svg";
 
 export default function EvseLiveDisplay(props) {
 
@@ -39,6 +41,8 @@ export default function EvseLiveDisplay(props) {
     const [power, setPower] = useState(-1);
     const [current, setCurrent] = useState(-1);
     const [voltage, setVoltage] = useState(-1);
+    const [idTag, setIdTag] = useState("");
+    const [showIdTagInput, setShowIdTagInput] = useState(false);
 
     useEffect(()=>{
         fetchEvse();
@@ -186,6 +190,41 @@ export default function EvseLiveDisplay(props) {
         </div>
     }
 
+    function handleInputChange(e) {
+        setIdTag(e.target.value);
+    }
+
+    function toggleIdTagInput() {
+        setShowIdTagInput(!showIdTagInput);
+        if (showIdTagInput) {
+            setIdTag("");
+        }
+    }
+
+    function swipeRfid() {
+        if (posting || idTag.trim() === "") return;
+        setPosting(true);
+        DataService.post("/connector/" + props.connectorId + "/transaction", { idTag: idTag })
+            .then(resp => {
+                if (resp.idTag === idTag) {
+                    setPostSuccess(`Transaction update confirmed - ${DateFormatter.fullDate(new Date())}`);
+                    setPostError("");
+                    setIdTag("");
+                    setShowIdTagInput(false);
+                } else {
+                    setPostSuccess("");
+                    setPostError("An error occurred while updating the transaction.");
+                }
+            })
+            .catch(e => {
+                setPostSuccess("");
+                setPostError("Unable to update transaction");
+            })
+            .finally(() => {
+                setPosting(false);
+            });
+    }
+
     return <div class={`evse-live is-padded-16 is-border-radius is-shadow-1 ${_currentGradient()}`}>
         <div class="is-row">
             <div class="is-col" style="flex-grow:0">
@@ -236,6 +275,7 @@ export default function EvseLiveDisplay(props) {
                                         evPlugged && <IPlugged />
                                     }
                                     <div>
+                                        Plug<br />
                                         {evPlugged?"Plugged":"Unplugged"}
                                     </div>
                                 </a>
@@ -244,17 +284,43 @@ export default function EvseLiveDisplay(props) {
                                         <IEv />
                                     </div>
                                     <div>
+                                        EV<br />
                                         {evReady?"Ready":"Not Ready"}
                                     </div>
                                 </a>
                                 <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${evseReady?`active ${_currentColor()}`:""}`} onClick={()=>{updateEvse(evPlugged, evReady, !evseReady);}}>
                                     <IEvseIcon />
                                     <div>
+                                        EVSE<br />
                                         {evseReady?"Ready":"Not Ready"}
+                                    </div>
+                                </a>
+                                <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${chargePointStatus === "Charging" ? `active ${_currentColor()}` : ""}`} onClick={toggleIdTagInput}>
+                                    <IUpload />
+                                    <div>
+                                        Swipe RFID
                                     </div>
                                 </a>
                             </div>
                         </div>
+                        {showIdTagInput && (
+                            <div class="is-row id-tag-input-row">
+                                <div class="is-col">
+                                    <input type="text" value={idTag} onChange={handleInputChange} placeholder="Enter Tag ID" class="is-full-width is-border-radius is-shadow-1" />
+                                </div>
+                                <div class="is-col-auto">
+                                    <button onClick={swipeRfid} class="button is-small">
+                                        Swipe
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                        {postError !== "" && <div class="alert is-error">
+                            <IForbidden /> {postError}
+                        </div>}
+                        {postSuccess !== "" && <div class="alert is-success">
+                            <ICheckCircle /> {postSuccess}
+                        </div>}
                     </div>
                     <div class="is-col meter-values">
                         <div class="label all-center">

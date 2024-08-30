@@ -52,7 +52,7 @@
 .evse-live .evse-attr{
     text-align: center;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: auto;
     margin-top:5px;
 }
@@ -80,6 +80,18 @@
 }
 .evse-live .live-rotate{
     animation: loadingRotate 4s linear 0s infinite;
+}
+.evse-live .id-tag-input-row {
+    margin-top: 10px;
+    align-items: center;
+}
+.evse-live .id-tag-input-row .is-col-auto {
+    margin-left: 10px;
+}
+.evse-live .id-tag-input-row input {
+    padding: 8px;
+    font-size: 14px;
+    width: 100%;
 }
 @media only screen and (max-width:767px) {
     .evse-live .status-badge{
