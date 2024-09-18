@@ -241,26 +241,20 @@ export default function EvseLiveDisplay(props) {
                                         {evPlugged?"Plugged":"Unplugged"}
                                     </div>
                                 </a>
-                                <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${evseReady?`active ${_currentColor()}`:""}`} onClick={()=>{updateEvse(evPlugged, evsePlugged, evReady, !evseReady);}}>
+                                <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${evseReady?`active ${_currentColor()}`:""}`} onClick={()=>{updateEvse(evPlugged, evReady, !evseReady);}}>
                                     <IEvseIcon />
                                     <div>
                                         <strong>EVSE Ready</strong><br />
                                         {evseReady?"Ready":"Not Ready"}
                                     </div>
                                 </a>
-                                <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${evReady?`active ${_currentColor()}`:""}`} onClick={()=>{updateEvse(evPlugged, evsePlugged, !evReady, evseReady);}}>
+                                <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${evReady?`active ${_currentColor()}`:""}`} onClick={()=>{updateEvse(evPlugged, !evReady, evseReady);}}>
                                     <div class="fix-height">
                                         <IEv />
                                     </div>
                                     <div>
                                         <strong>EV Ready</strong><br />
                                         {evReady?"Ready":"Not Ready"}
-                                    </div>
-                                </a>
-                                <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${evseReady?`active ${_currentColor()}`:""}`} onClick={()=>{updateEvse(evPlugged, evReady, !evseReady);}}>
-                                    <IEvseIcon />
-                                    <div>
-                                        {evseReady?"Ready":"Not Ready"}
                                     </div>
                                 </a>
                             </div>
