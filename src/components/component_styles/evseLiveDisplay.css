@@ -36,9 +36,6 @@
 .evse-live .status-attr:first-child{
     margin-left:0;
 }
-.evse-live .status-attr.active{
-    font-weight: bold;
-}
 .evse-live a.status-attr .fix-height{
     height: 40.5px;
 }
