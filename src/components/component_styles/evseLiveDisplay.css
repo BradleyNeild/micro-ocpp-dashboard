@@ -29,15 +29,16 @@
     padding:10px;
     background:rgba(255, 255, 255, 0.6);
     text-decoration: none;
+    white-space: nowrap;
+    flex: 1 0 18%;
+    min-width: 100px;
+    max-width: 200px;
 }
 .evse-live .status-attr:active{
     background:rgba(213, 213, 213, 0.6);
 }
 .evse-live .status-attr:first-child{
     margin-left:0;
-}
-.evse-live .status-attr.active{
-    font-weight: bold;
 }
 .evse-live a.status-attr .fix-height{
     height: 40.5px;
@@ -52,7 +53,7 @@
 .evse-live .evse-attr{
     text-align: center;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: auto;
     margin-top:5px;
 }
@@ -80,6 +81,19 @@
 }
 .evse-live .live-rotate{
     animation: loadingRotate 4s linear 0s infinite;
+}
+.evse-live .id-tag-input-row {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    align-items: center;
+}
+.evse-live .id-tag-input-row .is-col-auto {
+    margin-left: 10px;
+}
+.evse-live .id-tag-input-row input {
+    padding: 8px;
+    font-size: 14px;
+    width: 100%;
 }
 @media only screen and (max-width:767px) {
     .evse-live .status-badge{
