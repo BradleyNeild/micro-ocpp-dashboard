@@ -53,7 +53,7 @@
 .evse-live .evse-attr{
     text-align: center;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: auto;
     margin-top:5px;
 }
