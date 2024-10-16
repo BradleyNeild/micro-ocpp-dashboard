@@ -16,6 +16,7 @@ import IUnplugged from "./icons/IUnplugged.svg";
 import IEv from "./icons/IEv.svg";
 import IEvseIcon from "./icons/IEvseIcon.svg";
 import ILiveArrows from "./icons/ILiveArrows.svg";
+import INFCIcon from "./icons/INFCIcon.svg";
 
 export default function EvseLiveDisplay(props) {
 
@@ -40,6 +41,8 @@ export default function EvseLiveDisplay(props) {
     const [power, setPower] = useState(-1);
     const [current, setCurrent] = useState(-1);
     const [voltage, setVoltage] = useState(-1);
+    const [idTag, setIdTag] = useState("");
+    const [showIdTagInput, setShowIdTagInput] = useState(false);
 
     useEffect(()=>{
         fetchEvse();
@@ -187,6 +190,36 @@ export default function EvseLiveDisplay(props) {
         </div>
     }
 
+    function handleInputChange(e) {
+        setIdTag(e.target.value);
+    }
+
+    function toggleIdTagInput() {
+        setShowIdTagInput(!showIdTagInput);
+    }
+
+    function tapRfid() {
+        if (posting || idTag.trim() === "") return;
+        setPosting(true);
+        DataService.post("/connector/" + props.connectorId + "/transaction", { idTag: idTag })
+            .then(resp => {
+                if (resp.idTag === idTag) {
+                    setPostSuccess(`Transaction update confirmed - ${DateFormatter.fullDate(new Date())}`);
+                    setPostError("");
+                } else {
+                    setPostSuccess("");
+                    setPostError("An error occurred while updating the transaction.");
+                }
+            })
+            .catch(e => {
+                setPostSuccess("");
+                setPostError("Unable to update transaction");
+            })
+            .finally(() => {
+                setPosting(false);
+            });
+    }
+
     return <div class={`evse-live is-padded-16 is-border-radius is-shadow-1 ${_currentGradient()}`}>
         <div class="is-row">
             <div class="is-col" style="flex-grow:0">
@@ -257,8 +290,27 @@ export default function EvseLiveDisplay(props) {
                                         {evReady?"Ready":"Not Ready"}
                                     </div>
                                 </a>
+                                <a href="#" class={`status-attr is-border-radius all-center is-shadow-1 interact ${_currentColor()}`} onClick={toggleIdTagInput}>
+                                    <INFCIcon />
+                                    <div>
+                                        <strong>Tap NFC</strong><br />
+                                        {showIdTagInput ? 'Collapse ▲' : 'Expand ▼'}
+                                    </div>
+                                </a>
                             </div>
                         </div>
+                        {showIdTagInput && (
+                            <div class="is-row id-tag-input-row">
+                                <div class="is-col">
+                                    <input type="text" value={idTag} onChange={handleInputChange} placeholder="Enter Tag ID" class="is-full-width is-border-radius is-shadow-1" />
+                                </div>
+                                <div class="is-col-auto">
+                                    <button onClick={tapRfid} class="button is-small">
+                                        Tap NFC
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <div class="is-col meter-values">
                         <div class="label all-center">
